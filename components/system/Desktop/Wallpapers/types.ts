@@ -55,7 +55,3 @@ export type ApodResponse = {
   hdurl?: string;
   url?: string;
 };
-
-export type ArtInstituteOfChicagoResponse = {
-  data: { image_id: string }[];
-};

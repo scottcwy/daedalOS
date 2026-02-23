@@ -63,10 +63,6 @@ export const REDUCED_MOTION_PERCENT = 0.1;
 
 export const WALLPAPER_MENU: WallpaperMenuItem[] = [
   {
-    id: "ART_INSTITUTE_OF_CHICAGO",
-    name: "Art Institute of Chicago",
-  },
-  {
     hasAlt: false,
     id: "COASTAL_LANDSCAPE",
     name: "Coastal Landscape",
