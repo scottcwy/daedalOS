@@ -8,6 +8,7 @@ const bundleAnalyzer = process.env.npm_config_argv?.includes(
 
 const path = require("path");
 const webpack = require("webpack");
+const nextOutput = "export";
 
 /**
  * @type {import("next").NextConfig}
@@ -26,22 +27,26 @@ const nextConfig = {
     },
   },
   devIndicators: false,
-  headers: async () => [
-    {
-      source: "/:path*",
-      headers: [
-        {
-          key: "Cross-Origin-Opener-Policy",
-          value: "same-origin",
-        },
-        {
-          key: "Cross-Origin-Embedder-Policy",
-          value: "credentialless",
-        },
-      ],
-    },
-  ],
-  output: "export",
+  ...(nextOutput === "export"
+    ? {}
+    : {
+        headers: async () => [
+          {
+            source: "/:path*",
+            headers: [
+              {
+                key: "Cross-Origin-Opener-Policy",
+                value: "same-origin",
+              },
+              {
+                key: "Cross-Origin-Embedder-Policy",
+                value: "credentialless",
+              },
+            ],
+          },
+        ],
+      }),
+  output: nextOutput,
   productionBrowserSourceMaps: false,
   reactProductionProfiling: false,
   reactStrictMode: !isProduction,

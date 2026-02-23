@@ -1,5 +1,6 @@
 import { basename, dirname, join } from "path";
 import ini from "ini";
+import DOMPurify from "dompurify";
 import { type FSModule } from "browserfs/dist/node/core/FS";
 import type Stats from "browserfs/dist/node/core/node_fs_stats";
 import { monacoExtensions } from "components/apps/MonacoEditor/extensions";
@@ -621,7 +622,12 @@ export const getInfoWithExtension = (
             // eslint-disable-next-line deprecation/deprecation
             containerElement.style.webkitUserSelect = "none";
 
-            containerElement.innerHTML = contents.toString();
+            containerElement.innerHTML = DOMPurify.sanitize(
+              contents.toString(),
+              {
+                USE_PROFILES: { html: true },
+              }
+            );
 
             document.body.append(containerElement);
 

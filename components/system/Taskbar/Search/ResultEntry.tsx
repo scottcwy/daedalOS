@@ -52,19 +52,24 @@ const ResultEntry: FC<ResultEntryProps> = ({
     [info?.url, url]
   );
   const baseName = useMemo(() => basename(url, SHORTCUT_EXTENSION), [url]);
-  const name = useMemo(() => {
-    let text = baseName;
+  const highlightedName = useMemo(() => {
+    if (!searchTerm) return baseName;
 
-    try {
-      text = text.replace(
-        new RegExp(`(${searchTerm})`, "i"),
-        "<span>$1</span>"
-      );
-    } catch {
-      // Ignore failure to wrap search text
-    }
+    const lowerName = baseName.toLowerCase();
+    const lowerTerm = searchTerm.toLowerCase();
+    const matchIndex = lowerName.indexOf(lowerTerm);
 
-    return text;
+    if (matchIndex === -1) return baseName;
+
+    return (
+      <>
+        {baseName.slice(0, matchIndex)}
+        <span>
+          {baseName.slice(matchIndex, matchIndex + searchTerm.length)}
+        </span>
+        {baseName.slice(matchIndex + searchTerm.length)}
+      </>
+    );
   }, [baseName, searchTerm]);
   const isYTUrl = useMemo(
     () => (info?.url ? isYouTubeUrl(info.url) : false),
@@ -174,7 +179,7 @@ const ResultEntry: FC<ResultEntryProps> = ({
           src={info?.icon}
         />
         <SubIcons
-          alt={name}
+          alt={baseName}
           icon={info?.icon}
           imgSize={details ? 32 : 16}
           showShortcutIcon={false}
@@ -182,12 +187,7 @@ const ResultEntry: FC<ResultEntryProps> = ({
           view="icon"
         />
         <figcaption>
-          <h1
-            // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{
-              __html: name,
-            }}
-          />
+          <h1>{highlightedName}</h1>
           {details && stats && (
             <>
               <h2>

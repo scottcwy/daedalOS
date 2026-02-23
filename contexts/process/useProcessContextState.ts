@@ -81,11 +81,15 @@ const useProcessContextState = (): ProcessContextState => {
           externalUrl.startsWith("http:") ||
           externalUrl.startsWith("https:")
         ) {
-          window.open(
-            decodeURIComponent(externalUrl),
-            "_blank",
-            "noopener,noreferrer"
-          );
+          let safeExternalUrl = externalUrl;
+
+          try {
+            safeExternalUrl = decodeURIComponent(externalUrl);
+          } catch {
+            // Ignore invalid URI sequences and fallback to raw URL
+          }
+
+          window.open(safeExternalUrl, "_blank", "noopener,noreferrer");
         }
       } else {
         setProcesses(openProcess(id, processArguments || {}, initialIcon));

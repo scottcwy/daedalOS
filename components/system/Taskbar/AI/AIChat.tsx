@@ -1,5 +1,6 @@
 import { useTheme } from "styled-components";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import DOMPurify from "dompurify";
 import {
   escapeHtml,
   formatWebLlmProgress,
@@ -63,6 +64,10 @@ type AIChatProps = {
 };
 
 const STREAMING_SUPPORT = true;
+const sanitizeMessageHtml = (messageHtml: string): string =>
+  DOMPurify.sanitize(messageHtml, {
+    USE_PROFILES: { html: true },
+  });
 
 const AIChat: FC<AIChatProps> = ({ toggleAI }) => {
   const {
@@ -94,7 +99,9 @@ const AIChat: FC<AIChatProps> = ({ toggleAI }) => {
       if (text) {
         setConversation((prevMessages) => {
           const newMessage = {
-            formattedText: responseTweaks(formattedText || text),
+            formattedText: sanitizeMessageHtml(
+              responseTweaks(formattedText || text)
+            ),
             text,
             type,
             withCanvas,
